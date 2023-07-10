@@ -70,10 +70,10 @@ L'ALU est conçue pour effectuer diverses opérations arithmétiques et logiques
 En résumé, l'ALU dans un processeur reçoit l'opération spécifiée par l'unité de contrôle, ainsi que les valeurs rs et rt provenant des registres source. Elle effectue l'opération demandée, telle que l'addition, la soustraction, ou des opérations logiques, et renvoie la valeur de rd correspondante, codée sur 8 bits. Cela permet d'effectuer des calculs et des opérations sur les données du processeur.
 
 ## 6) Valeur du mutex ( mutex_value ) :
- Les différentes opérations :
-L'architecture du microprocesseur :
-Les fonctionnalités LOAD et NEW :
-Simulation :
+ Les différentes opérations ,
+L'architecture du microprocesseur ,
+Les fonctionnalités LOAD et NEW ,
+Simulation .
  
 
 
