@@ -1,0 +1,100 @@
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+
+entity control_tb is
+END control_tb;
+
+architecture behavior of control_tb is
+
+COMPONENT control
+	port(
+		instr : in STD_LOGIC_VECTOR(13 downto 0);
+		rs_addr : out STD_LOGIC_VECTOR(2 downto 0);
+		rt_addr : out STD_LOGIC_VECTOR(2 downto 0);
+		rd_addr : out STD_LOGIC_VECTOR(2 downto 0);
+		op : out STD_LOGIC_VECTOR (4 downto 0);
+		sel : out STD_LOGIC_VECTOR(1 downto 0);
+		valuee : out STD_LOGIC_VECTOR(7 downto 0)
+	);
+END COMPONENT;
+
+--Inputs
+SIGNAL instr_tb : STD_LOGIC_VECTOR(13 downto 0);
+--Outputs
+SIGNAL rs_addr : STD_LOGIC_VECTOR(2 downto 0);
+SIGNAL rt_addr :  STD_LOGIC_VECTOR(2 downto 0);
+SIGNAL rd_addr :  STD_LOGIC_VECTOR(2 downto 0);
+SIGNAL op :  STD_LOGIC_VECTOR (4 downto 0);
+SIGNAL sel : STD_LOGIC_VECTOR(1 downto 0);
+SIGNAL valuee : STD_LOGIC_VECTOR(7 downto 0);
+
+
+
+
+--clock period definition
+CONSTANT clk_period : time := 10 ns;
+
+
+type instruction_set is array(0 to 20) of STD_LOGIC_VECTOR(13 downto 0);
+	constant instr_s : instruction_set :=(
+		"00001000001000", -- plus
+		"00011000000000", -- mult
+		"00010000001000", -- moins
+		"00000000000000", -- and
+		"00100000010000", -- div
+		"00101000010000", -- sll by 2
+		"00110000010000", -- slr by 2
+		"00111000011000", -- rol by 7
+		"01000000011000", -- ror by 7
+		"01001000011000", -- or of 4 and 7
+		"01010000010000", -- xor of 7 and 4
+		"01100000010000", -- nor ...101 and ...010 sur 8 bit
+		"01101000100000", --nand entre F8 et F0 => 0F
+		"01110000101000", -- xnor 0F et EA => 1A
+		"11111000000000", -- reset
+		"11111000000000",
+		"11111011000011", -- value 3
+		"11111110000011", -- value 2
+		"11111000000000",
+		"10000000111000", --NEW value 7 to the 000 address
+		"11111000000000"  -- LOAD the new value just to make sure
+	
+	);
+
+BEGIN
+
+--Instatntiate the unit under test (UUT)
+
+uut : control
+	port map(
+		instr => instr_tb,
+		rs_addr => rs_addr,
+		rt_addr => rt_addr,
+		rd_addr => rd_addr,
+		op => op,
+		sel => sel,
+		valuee => valuee
+	);
+
+
+
+ -- Stimulus process
+  stimulus_proc: process
+  begin
+	
+	
+
+    -- Increment instr_addr_tb by 1 in each iteration
+    for i in 0 to 20 loop
+      
+      instr_tb <= instr_s(i);
+	wait for 10 ns;
+    end loop;
+
+    wait;
+  end process stimulus_proc;
+END;

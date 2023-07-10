@@ -1,0 +1,53 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity ALU is
+    port(
+        op : in STD_LOGIC_VECTOR (4 downto 0);
+        rs : in STD_LOGIC_VECTOR (7 downto 0);
+        rt : in STD_LOGIC_VECTOR (7 downto 0);
+	rd : out STD_LOGIC_VECTOR(7 downto 0)
+    );
+end ALU;
+
+architecture Behavioral of ALU is
+    signal result : STD_LOGIC_VECTOR(7 downto 0);
+begin
+    process(op, rs, rt)
+    begin
+	
+        if (op = "00000") then
+            result <= rs and rt;
+        elsif (op = "00001") then
+            result <= std_logic_vector(unsigned(rs) + unsigned(rt));
+        elsif (op = "00010") then
+            result <= std_logic_vector(unsigned(rs) - unsigned(rt));
+        elsif (op = "00011") then
+            result <= std_logic_vector(to_unsigned((to_integer(unsigned(rs)) * to_integer(unsigned(rt))),8));
+	elsif (op = "00100") then
+            result <= std_logic_vector(to_unsigned((to_integer(unsigned(rs)) / to_integer(unsigned(rt))),8));
+	elsif (op = "00101") then
+	    result <= std_logic_vector(shift_left(unsigned(rs), to_integer(unsigned(rt))));
+	elsif (op = "00110") then
+	    result <= std_logic_vector(shift_right(unsigned(rs), to_integer(unsigned(rt))));
+	elsif (op = "00111") then
+	    result <= std_logic_vector(unsigned(rs) rol to_integer(unsigned(rt)));
+	elsif (op = "01000") then
+	    result <= std_logic_vector(unsigned(rs) ror to_integer(unsigned(rt)));
+	elsif (op = "01001") then
+		result <= rs or rt;
+	elsif (op = "01010") then
+		result <= rs xor rt;
+	elsif (op = "01100") then
+		result <= rs nor rt;
+	elsif (op = "01101") then
+		result <= rs nand rt;
+	elsif (op = "01110") then
+		result <= rs xnor rt;
+	else
+		result <="00000001";
+        end if;
+    end process;
+    rd <= result;
+end Behavioral;

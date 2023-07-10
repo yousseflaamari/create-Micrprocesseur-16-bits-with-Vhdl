@@ -1,0 +1,101 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity Registers_tb is
+end Registers_tb;
+
+architecture Behavioral of Registers_tb is
+    -- Component declaration
+    component Registers is
+        port(
+            clk     : in STD_LOGIC;
+            rs_addr : in STD_LOGIC_VECTOR (2 downto 0);
+            rt_addr : in STD_LOGIC_VECTOR (2 downto 0);
+            rd_addr : in STD_LOGIC_VECTOR (2 downto 0);
+            wr_data : in STD_LOGIC_VECTOR (7 downto 0);
+            rs      : out STD_LOGIC_VECTOR (7 downto 0);
+            rt      : out STD_LOGIC_VECTOR (7 downto 0)
+        );
+    end component;
+
+    -- Signals
+    signal clk      : STD_LOGIC;
+    signal rs_addr  : STD_LOGIC_VECTOR (2 downto 0);
+    signal rt_addr  : STD_LOGIC_VECTOR (2 downto 0);
+    signal rd_addr  : STD_LOGIC_VECTOR (2 downto 0);
+    signal wr_data  : STD_LOGIC_VECTOR (7 downto 0);
+    signal rs       : STD_LOGIC_VECTOR (7 downto 0);
+    signal rt       : STD_LOGIC_VECTOR (7 downto 0);
+
+    -- Clock period definition
+    constant clk_period: time := 10 ns;
+type instruction_set is array(0 to 20) of STD_LOGIC_VECTOR(13 downto 0);
+	constant instr : instruction_set :=(
+		"00001000001000", -- plus
+		"00011000000000", -- mult
+		"00010000001000", -- moins
+		"00000000000000", -- and
+		"00100000010000", -- div
+		"00101000010000", -- sll by 2
+		"00110000010000", -- slr by 2
+		"00111000011000", -- rol by 7
+		"01000000011000", -- ror by 7
+		"01001000011000", -- or of 4 and 7
+		"01010000010000", -- xor of 7 and 4
+		"01100000010000", -- nor ...101 and ...010 sur 8 bit
+		"01101000100000", --nand entre F8 et F0 => 0F
+		"01110000101000", -- xnor 0F et EA => 1A
+		"11111000000000", -- reset
+		"11111000000000",
+		"11111011000011", -- value 3
+		"11111110000011", -- value 2
+		"11111000000000",
+		"10000000111000", --NEW value 7 to the 000 address
+		"11111000000000"  -- LOAD the new value just to make sure
+	
+	);
+
+begin
+    -- Instantiate the unit under test (UUT)
+    uut: Registers
+    port map (
+        clk     => clk,
+        rs_addr => rs_addr,
+        rt_addr => rt_addr,
+        rd_addr => rd_addr,
+        wr_data => wr_data,
+        rs      => rs,
+        rt      => rt
+    );
+
+    -- Clock generation process
+    clk_process: process
+    begin
+        clk <= '0';
+        wait for clk_period/2;
+        clk <= '1';
+        wait for clk_period/2;
+    end process clk_process;
+
+    -- Stimulus process
+    stimulus_proc: process
+    begin
+        -- Initialize inputs
+        wr_data <= "11111111";
+        
+        -- Loop through all addresses
+        for i in 0 to 7 loop
+            rs_addr <= instr(i)(8 downto 6);
+            rt_addr <= instr(i)(5 downto 3);
+            rd_addr <= instr(i)(2 downto 0);
+
+            wait for clk_period * 2;
+
+            -- Add more test cases or sequences here
+        end loop;
+
+        wait;
+    end process stimulus_proc;
+
+end Behavioral;

@@ -1,0 +1,29 @@
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+
+entity pc is
+	port(
+		clk : in STD_LOGIC;
+		next_instr : out  STD_LOGIC_VECTOR (4 downto 0)
+	);
+end pc;
+
+
+
+architecture Behavioral of pc is
+	signal current_signal : STD_LOGIC_VECTOR (4 downto 0):="00000";
+
+begin
+	process(clk)
+	begin
+		if falling_edge(clk) then
+			current_signal <= std_logic_vector(unsigned(current_signal) + to_unsigned(1,5));
+		end if;
+	end process;	
+
+next_instr <= current_signal;
+
+end Behavioral;
